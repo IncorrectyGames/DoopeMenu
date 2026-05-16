@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOOPE MENU — Super Admin</title>
+<style>
+@font-face { font-family:"GANGBANGFONT"; src:url('GangBangCrime-86lM.ttf') format('truetype'); }
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+    font-family:Arial,sans-serif;
+    background:linear-gradient(270deg,#0a0a0a,#03884e,#64035e,#0a0a0a);
+    background-size:600% 600%;
+    animation:bg 18s ease infinite;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+@keyframes bg { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+.bg-logo {
+    position:fixed; top:50%; left:50%; width:600px; height:600px;
+    background:url('LOGO_TRASPARENZA.png') no-repeat center/contain;
+    opacity:0.05; transform:translate(-50%,-50%); pointer-events:none; z-index:0;
+}
+
+/* ── Login overlay ──────────────────────────────────── */
+#loginOverlay {
+    position:fixed; inset:0; z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.7); backdrop-filter:blur(6px);
+}
+.login-card {
+    background:linear-gradient(145deg,#141414,#1a1230);
+    border:1px solid rgba(0,255,136,0.2);
+    border-radius:22px;
+    padding:44px 40px 36px;
+    width:100%; max-width:370px;
+    box-shadow:0 0 40px rgba(0,255,136,0.08), 0 24px 60px rgba(0,0,0,0.7);
+    text-align:center;
+}
+.logo-title { font-family:"GANGBANGFONT",sans-serif; font-size:2rem; color:#eadb06; text-shadow:0 0 18px rgba(234,219,6,0.7); letter-spacing:5px; margin-bottom:4px; }
+.logo-sub { color:rgba(255,255,255,0.25); font-size:10px; letter-spacing:3px; text-transform:uppercase; margin-bottom:36px; }
+.field { margin-bottom:20px; text-align:left; }
+.field label { display:block; font-size:10px; letter-spacing:2px; color:#666; text-transform:uppercase; margin-bottom:8px; }
+.field input[type="password"], .field input[type="text"], .field input[type="email"], .field input[type="date"] {
+    width:100%; background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.12);
+    color:#e0e0e0; padding:13px 16px; border-radius:10px; font-size:15px;
+    outline:none; transition:border-color 0.2s; letter-spacing:2px;
+}
+.field input:focus { border-color:#00ff88; }
+.btn-green {
+    width:100%; background:#00ff88; color:#0a0a0a; border:none;
+    padding:14px; border-radius:30px; font-size:14px; font-weight:bold;
+    letter-spacing:3px; cursor:pointer; transition:all 0.2s;
+    box-shadow:0 0 20px rgba(0,255,136,0.3); margin-top:6px;
+}
+.btn-green:hover { box-shadow:0 0 34px rgba(0,255,136,0.6); transform:translateY(-1px); }
+.btn-green:disabled { opacity:0.45; cursor:default; transform:none; box-shadow:none; }
+.error {
+    background:rgba(255,68,85,0.12); border:1px solid rgba(255,68,85,0.35);
+    color:#ff7788; padding:11px 14px; border-radius:9px; font-size:12px;
+    margin-bottom:18px; display:none; text-align:left; line-height:1.5;
+}
+
+/* ── Main dashboard ─────────────────────────────────── */
+#dashboard { display:none; position:relative; z-index:1; width:100%; max-width:680px; padding:20px; }
+
+.dash-header {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:28px;
+}
+.dash-title { font-family:"GANGBANGFONT",sans-serif; font-size:1.7rem; color:#eadb06; letter-spacing:4px; text-shadow:0 0 14px rgba(234,219,6,0.6); }
+.dash-sub { color:rgba(255,255,255,0.3); font-size:10px; letter-spacing:3px; text-transform:uppercase; margin-top:3px; }
+.btn-logout {
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15);
+    color:rgba(255,255,255,0.5); padding:9px 18px; border-radius:20px;
+    font-size:12px; cursor:pointer; transition:all 0.2s; letter-spacing:1px;
+}
+.btn-logout:hover { color:#fff; border-color:rgba(255,255,255,0.4); }
+
+.section {
+    background:linear-gradient(145deg,#141414,#1a1230);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:16px; padding:24px 28px; margin-bottom:16px;
+}
+.section-title {
+    font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    color:rgba(255,255,255,0.35); margin-bottom:18px;
+    padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.section-title span { color:#00ff88; margin-right:8px; }
+
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(max-width:500px) { .row2 { grid-template-columns:1fr; } }
+
+/* Plan pills */
+.plans { display:flex; gap:8px; flex-wrap:wrap; }
+.plan-btn {
+    background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.12);
+    color:rgba(255,255,255,0.5); padding:9px 18px; border-radius:20px;
+    font-size:12px; cursor:pointer; transition:all 0.2s; letter-spacing:1px;
+}
+.plan-btn.active { background:rgba(0,255,136,0.15); border-color:#00ff88; color:#00ff88; }
+.plan-btn:hover:not(.active) { border-color:rgba(255,255,255,0.3); color:rgba(255,255,255,0.8); }
+
+/* Toggle switch */
+.toggle-row { display:flex; align-items:center; justify-content:space-between; }
+.toggle-label { font-size:13px; color:rgba(255,255,255,0.6); }
+.toggle-switch { position:relative; width:48px; height:26px; cursor:pointer; }
+.toggle-switch input { opacity:0; width:0; height:0; }
+.slider {
+    position:absolute; inset:0; border-radius:26px;
+    background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15);
+    transition:0.3s;
+}
+.slider:before {
+    content:''; position:absolute; width:18px; height:18px;
+    left:3px; top:3px; border-radius:50%;
+    background:rgba(255,255,255,0.4); transition:0.3s;
+}
+input:checked + .slider { background:rgba(0,255,136,0.25); border-color:#00ff88; }
+input:checked + .slider:before { transform:translateX(22px); background:#00ff88; }
+
+/* Stats bar */
+.stats-bar { display:flex; gap:28px; flex-wrap:wrap; }
+.stat { }
+.stat-label { font-size:9px; letter-spacing:2px; color:rgba(255,255,255,0.25); text-transform:uppercase; margin-bottom:4px; }
+.stat-value { font-size:13px; color:rgba(255,255,255,0.6); }
+
+/* Save button */
+.btn-save {
+    width:100%; background:#00ff88; color:#0a0a0a; border:none;
+    padding:14px; border-radius:30px; font-size:14px; font-weight:bold;
+    letter-spacing:3px; cursor:pointer; transition:all 0.2s;
+    box-shadow:0 0 20px rgba(0,255,136,0.3); margin-top:6px;
+}
+.btn-save:hover { box-shadow:0 0 34px rgba(0,255,136,0.6); transform:translateY(-1px); }
+.btn-save:disabled { opacity:0.45; cursor:default; transform:none; box-shadow:none; }
+
+.notice {
+    padding:11px 14px; border-radius:9px; font-size:12px;
+    margin-bottom:0; text-align:left; line-height:1.5; display:none;
+}
+.notice.ok  { background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); color:#00ff88; }
+.notice.err { background:rgba(255,68,85,0.12); border:1px solid rgba(255,68,85,0.35); color:#ff7788; }
+
+.divider { height:1px; background:rgba(255,255,255,0.07); margin:18px 0; }
+
+.pw-row { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; }
+.btn-small {
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.15);
+    color:rgba(255,255,255,0.6); padding:13px 16px; border-radius:10px;
+    font-size:12px; cursor:pointer; transition:all 0.2s; white-space:nowrap;
+    letter-spacing:1px;
+}
+.btn-small:hover { border-color:#00ff88; color:#00ff88; }
+</style>
+</head>
+<body>
+<div class="bg-logo"></div>
+
+<!-- ── Login overlay ─────────────────────────── -->
+<div id="loginOverlay">
+    <div class="login-card">
+        <div class="logo-title">DOOPE MENU</div>
+        <div class="logo-sub">accesso super admin</div>
+
+        <div class="error" id="loginErr"></div>
+
+        <div class="field">
+            <label>Password master</label>
+            <input type="password" id="masterPwd" placeholder="••••••••"
+                   onkeydown="if(event.key==='Enter')doMasterLogin()" autocomplete="current-password">
+        </div>
+
+        <button class="btn-green" id="loginBtn" onclick="doMasterLogin()">ACCEDI</button>
+    </div>
+</div>
+
+<!-- ── Main dashboard ────────────────────────── -->
+<div id="dashboard">
+    <div class="dash-header">
+        <div>
+            <div class="dash-title">SUPER ADMIN</div>
+            <div class="dash-sub">pannello di controllo</div>
+        </div>
+        <button class="btn-logout" onclick="doLogout()">🚪 Esci</button>
+    </div>
+
+    <!-- Client info -->
+    <div class="section">
+        <div class="section-title"><span>👤</span>CLIENTE</div>
+        <div class="row2">
+            <div class="field">
+                <label>Nome club / cliente</label>
+                <input type="text" id="clientName" placeholder="Es. Club Verde">
+            </div>
+            <div class="field">
+                <label>Email contatto</label>
+                <input type="email" id="clientEmail" placeholder="email@esempio.com">
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription -->
+    <div class="section">
+        <div class="section-title"><span>💳</span>ABBONAMENTO</div>
+
+        <div style="margin-bottom:18px;">
+            <div class="field" style="margin-bottom:12px;">
+                <label>Piano</label>
+            </div>
+            <div class="plans" id="planBtns">
+                <button class="plan-btn" data-plan="trial"    onclick="setPlan(this)">Trial</button>
+                <button class="plan-btn" data-plan="monthly"  onclick="setPlan(this)">Mensile</button>
+                <button class="plan-btn" data-plan="yearly"   onclick="setPlan(this)">Annuale</button>
+                <button class="plan-btn" data-plan="lifetime" onclick="setPlan(this)">Lifetime</button>
+            </div>
+        </div>
+
+        <div class="row2" style="margin-bottom:18px;">
+            <div class="field">
+                <label>Scadenza abbonamento</label>
+                <input type="date" id="expiryDate">
+            </div>
+            <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:0;">
+                <label style="display:block;font-size:10px;letter-spacing:2px;color:#666;text-transform:uppercase;margin-bottom:8px;">Stato accesso</label>
+                <div class="toggle-row">
+                    <span class="toggle-label" id="activeLabel">Attivo</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="activeToggle" checked onchange="updateActiveLabel()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Security -->
+    <div class="section">
+        <div class="section-title"><span>🔐</span>SICUREZZA</div>
+
+        <div class="field" style="margin-bottom:6px;">
+            <label>Nuova password admin (accesso catalogo)</label>
+            <div class="pw-row">
+                <input type="password" id="newAdminPwd" placeholder="Lascia vuoto per non cambiare">
+                <button class="btn-small" onclick="changeAdminPwd()">Cambia</button>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field" style="margin-bottom:6px;">
+            <label>Nuova password master (questo pannello)</label>
+            <div class="pw-row">
+                <input type="password" id="newMasterPwd" placeholder="Lascia vuoto per non cambiare">
+                <button class="btn-small" onclick="changeMasterPwd()">Cambia</button>
+            </div>
+        </div>
+
+        <div class="notice" id="pwNotice"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="section">
+        <div class="section-title"><span>📊</span>STATISTICHE</div>
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-label">Creato il</div>
+                <div class="stat-value" id="statCreated">—</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Ultimo accesso admin</div>
+                <div class="stat-value" id="statLastLogin">—</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save / Notice -->
+    <div class="notice" id="saveNotice" style="margin-bottom:12px;"></div>
+    <button class="btn-save" id="saveBtn" onclick="saveAll()">SALVA MODIFICHE</button>
+</div>
+
+<script>
+let currentPlan = 'trial';
+
+// ── Boot: check if already authenticated ──────────────
+fetch('/superadmin/check-auth').then(r=>r.json()).then(d=>{
+    if (d.ok) showDashboard();
+}).catch(()=>{});
+
+// ── Master login ──────────────────────────────────────
+async function doMasterLogin() {
+    const pwd = document.getElementById('masterPwd').value;
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('loginErr');
+    if (!pwd) { showLoginErr('Inserisci la password master'); return; }
+
+    btn.disabled = true; btn.textContent = '...';
+    err.style.display = 'none';
+
+    try {
+        const res  = await fetch('/superadmin/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ password:pwd }) });
+        const data = await res.json();
+        if (data.ok) {
+            showDashboard();
+        } else {
+            showLoginErr(data.reason === 'wrong_password' ? '❌ Password errata.' : '❌ Errore del server.');
+        }
+    } catch(e) {
+        showLoginErr('❌ Server non raggiungibile.');
+    }
+
+    btn.disabled = false; btn.textContent = 'ACCEDI';
+}
+
+function showLoginErr(msg) {
+    const el = document.getElementById('loginErr');
+    el.textContent = msg;
+    el.style.display = 'block';
+}
+
+// ── Dashboard ─────────────────────────────────────────
+async function showDashboard() {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    await loadData();
+}
+
+async function loadData() {
+    try {
+        const res  = await fetch('/superadmin/data');
+        const data = await res.json();
+        if (!data.ok) { window.location.reload(); return; }
+        const d = data.data;
+
+        document.getElementById('clientName').value  = d.name  || '';
+        document.getElementById('clientEmail').value = d.email || '';
+        document.getElementById('expiryDate').value  = d.expiry ? d.expiry.substring(0, 10) : '';
+        document.getElementById('activeToggle').checked = !!d.active;
+        updateActiveLabel();
+        setPlanUI(d.plan || 'trial');
+        document.getElementById('statCreated').textContent   = d.createdAt   ? fmtDate(d.createdAt)   : '—';
+        document.getElementById('statLastLogin').textContent = d.lastLogin   ? fmtDate(d.lastLogin)   : 'Mai';
+    } catch(e) {
+        showNotice('saveNotice', '❌ Errore caricamento dati.', false);
+    }
+}
+
+function fmtDate(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    return d.toLocaleDateString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric' })
+         + ' ' + d.toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit' });
+}
+
+function setPlan(btn) {
+    currentPlan = btn.dataset.plan;
+    setPlanUI(currentPlan);
+}
+
+function setPlanUI(plan) {
+    currentPlan = plan;
+    document.querySelectorAll('.plan-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.plan === plan);
+    });
+}
+
+function updateActiveLabel() {
+    const on = document.getElementById('activeToggle').checked;
+    document.getElementById('activeLabel').textContent = on ? 'Attivo' : 'Disattivato';
+    document.getElementById('activeLabel').style.color = on ? '#00ff88' : '#ff7788';
+}
+
+async function saveAll() {
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true; btn.textContent = '...';
+
+    try {
+        const body = {
+            name:   document.getElementById('clientName').value,
+            email:  document.getElementById('clientEmail').value,
+            plan:   currentPlan,
+            expiry: document.getElementById('expiryDate').value || null,
+            active: document.getElementById('activeToggle').checked,
+        };
+        const res  = await fetch('/superadmin/update', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+        const data = await res.json();
+        showNotice('saveNotice', data.ok ? '✅ Salvato con successo.' : '❌ Errore salvataggio.', data.ok);
+    } catch(e) {
+        showNotice('saveNotice', '❌ Server non raggiungibile.', false);
+    }
+
+    btn.disabled = false; btn.textContent = 'SALVA MODIFICHE';
+}
+
+async function changeAdminPwd() {
+    const pwd = document.getElementById('newAdminPwd').value.trim();
+    if (!pwd) { showNotice('pwNotice', '⚠️ Inserisci la nuova password admin.', false); return; }
+    if (pwd.length < 6) { showNotice('pwNotice', '⚠️ Password troppo corta (minimo 6 caratteri).', false); return; }
+    try {
+        const res  = await fetch('/superadmin/update', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ adminPwd: pwd }) });
+        const data = await res.json();
+        if (data.ok) { document.getElementById('newAdminPwd').value = ''; showNotice('pwNotice', '✅ Password admin aggiornata.', true); }
+        else showNotice('pwNotice', '❌ Errore aggiornamento.', false);
+    } catch(e) { showNotice('pwNotice', '❌ Server non raggiungibile.', false); }
+}
+
+async function changeMasterPwd() {
+    const pwd = document.getElementById('newMasterPwd').value.trim();
+    if (!pwd) { showNotice('pwNotice', '⚠️ Inserisci la nuova password master.', false); return; }
+    if (pwd.length < 6) { showNotice('pwNotice', '⚠️ Password troppo corta (minimo 6 caratteri).', false); return; }
+    try {
+        const res  = await fetch('/superadmin/update', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ masterPwd: pwd }) });
+        const data = await res.json();
+        if (data.ok) { document.getElementById('newMasterPwd').value = ''; showNotice('pwNotice', '✅ Password master aggiornata.', true); }
+        else showNotice('pwNotice', '❌ Errore aggiornamento.', false);
+    } catch(e) { showNotice('pwNotice', '❌ Server non raggiungibile.', false); }
+}
+
+function showNotice(id, msg, ok) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'notice ' + (ok ? 'ok' : 'err');
+    el.style.display = 'block';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+async function doLogout() {
+    await fetch('/superadmin/logout', { method:'POST' }).catch(()=>{});
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginOverlay').style.display = 'flex';
+    document.getElementById('masterPwd').value = '';
+    document.getElementById('loginErr').style.display = 'none';
+}
+</script>
+</body>
+</html>

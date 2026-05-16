@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doope Menu — Il catalogo del tuo club</title>
+<meta name="description" content="Software di gestione catalogo per associazioni cannabiche private. Elegante, veloce, tuo.">
+<style>
+@font-face { font-family:"Alamanca"; src:url('AlamancaDemo-Wp8Mn.otf') format('opentype'); }
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+:root {
+    --bg:      #06100a;
+    --surf:    #0c1a10;
+    --surf2:   #111f15;
+    --green:   #00bb55;
+    --gbright: #00ee6a;
+    --gold:    #c8a020;
+    --white:   #edf2ee;
+    --muted:   rgba(237,242,238,0.45);
+    --dim:     rgba(237,242,238,0.18);
+    --border:  rgba(237,242,238,0.09);
+    --borderl: rgba(237,242,238,0.05);
+}
+
+html { scroll-behavior:smooth; }
+body { font-family:Arial,sans-serif; background:var(--bg); color:var(--white); overflow-x:hidden; }
+
+/* ── NAV ─────────────────────────────────────── */
+nav {
+    position:fixed; inset:0 0 auto 0; z-index:200;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 48px; height:60px;
+    background:rgba(6,16,10,0.88); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+}
+.nav-brand { font-family:"Alamanca",serif; font-size:1.35rem; color:var(--green); letter-spacing:2px; }
+.nav-links { display:flex; gap:36px; list-style:none; }
+.nav-links a { color:var(--muted); text-decoration:none; font-size:12px; letter-spacing:2px; text-transform:uppercase; transition:color .2s; }
+.nav-links a:hover { color:var(--white); }
+.nav-btn {
+    font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    background:var(--green); color:var(--bg); padding:10px 26px;
+    text-decoration:none; font-weight:bold; transition:background .2s;
+}
+.nav-btn:hover { background:var(--gbright); }
+@media(max-width:700px) { nav { padding:0 20px; } .nav-links { display:none; } }
+
+/* ── HERO ────────────────────────────────────── */
+#hero {
+    min-height:100vh; display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center; padding:80px 24px 60px;
+    position:relative; overflow:hidden;
+    background:radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,187,85,0.10) 0%, transparent 70%), var(--bg);
+}
+.hero-glow {
+    position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,187,85,0.07) 0%, transparent 65%);
+    animation:pulse 6s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.hero-pre {
+    font-size:10px; letter-spacing:6px; text-transform:uppercase;
+    color:var(--green); margin-bottom:32px; display:flex; align-items:center; gap:14px;
+}
+.hero-pre::before, .hero-pre::after { content:''; flex:1; max-width:40px; height:1px; background:var(--green); opacity:.5; }
+.hero-title {
+    font-family:"Alamanca",serif;
+    font-size:clamp(4.5rem,12vw,10rem);
+    color:var(--white); line-height:.95;
+    letter-spacing:-1px; margin-bottom:0;
+}
+.hero-title-accent { color:var(--green); display:block; }
+.hero-divider { width:1px; height:60px; background:linear-gradient(to bottom, transparent, var(--green), transparent); margin:36px auto; }
+.hero-sub { font-size:clamp(14px,2vw,17px); color:var(--muted); max-width:480px; line-height:1.8; margin-bottom:44px; }
+.hero-ctas { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+.cta-main {
+    background:var(--green); color:var(--bg);
+    font-size:12px; letter-spacing:4px; text-transform:uppercase; font-weight:bold;
+    padding:16px 44px; text-decoration:none; transition:all .2s;
+    box-shadow:0 0 40px rgba(0,187,85,.35);
+}
+.cta-main:hover { background:var(--gbright); box-shadow:0 0 60px rgba(0,238,106,.5); transform:translateY(-2px); }
+.cta-ghost {
+    border:1px solid var(--dim); color:var(--muted);
+    font-size:12px; letter-spacing:4px; text-transform:uppercase;
+    padding:16px 44px; text-decoration:none; transition:all .2s;
+}
+.cta-ghost:hover { border-color:var(--white); color:var(--white); }
+.hero-scroll { position:absolute; bottom:28px; left:50%; transform:translateX(-50%); font-size:10px; letter-spacing:4px; color:var(--dim); text-transform:uppercase; animation:scrollb 2s ease infinite; }
+@keyframes scrollb { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(5px)} }
+
+/* ── STATS BAR ───────────────────────────────── */
+#stats {
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+    display:grid; grid-template-columns:repeat(4,1fr);
+}
+@media(max-width:600px) { #stats { grid-template-columns:1fr 1fr; } }
+.stat-item {
+    padding:28px 24px; border-right:1px solid var(--border);
+    text-align:center;
+}
+.stat-item:last-child { border-right:none; }
+.stat-num { font-family:"Alamanca",serif; font-size:2.4rem; color:var(--green); line-height:1; }
+.stat-lbl { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); margin-top:6px; }
+
+/* ── IN USO ──────────────────────────────────── */
+#inuso { display:grid; grid-template-columns:3fr 2fr; }
+@media(max-width:700px) { #inuso { grid-template-columns:1fr; } }
+.inuso-panel { position:relative; overflow:hidden; height:600px; }
+@media(max-width:700px) { .inuso-panel { height:380px; } }
+.inuso-panel img { width:100%; height:100%; object-fit:cover; object-position:center 75%; display:block; transition:transform .8s ease; }
+.inuso-panel:hover img { transform:scale(1.04); }
+.inuso-panel-a .inuso-over {
+    position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(6,16,10,.9) 0%, rgba(6,16,10,.55) 50%, transparent 100%);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:52px;
+}
+.inuso-panel-b .inuso-over {
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(6,16,10,.8) 0%, transparent 55%);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:32px;
+}
+.inuso-tag { font-size:9px; letter-spacing:5px; text-transform:uppercase; color:var(--green); margin-bottom:14px; }
+.inuso-h { font-family:"Alamanca",serif; font-size:clamp(1.6rem,3vw,2.6rem); color:var(--white); line-height:1.2; margin-bottom:14px; }
+.inuso-p { font-size:13px; color:rgba(237,242,238,.65); line-height:1.8; max-width:360px; }
+
+/* ── FEATURES — full bleed alternating ───────── */
+#features { background:var(--surf); }
+.feat-block {
+    display:grid; grid-template-columns:1fr 1fr;
+    border-bottom:1px solid var(--border);
+}
+.feat-block.flip { direction:rtl; }
+.feat-block.flip > * { direction:ltr; }
+@media(max-width:720px) { .feat-block, .feat-block.flip { grid-template-columns:1fr; direction:ltr; } }
+.feat-text {
+    padding:80px 60px; display:flex; flex-direction:column; justify-content:center;
+    border-right:1px solid var(--border);
+}
+.feat-block.flip .feat-text { border-right:none; border-left:1px solid var(--border); }
+@media(max-width:720px) { .feat-text { border-right:none!important; border-left:none!important; padding:48px 28px; } }
+.feat-num { font-family:"Alamanca",serif; font-size:5rem; color:rgba(0,187,85,.12); line-height:1; margin-bottom:20px; }
+.feat-h { font-size:clamp(1.3rem,2.5vw,1.8rem); font-weight:bold; color:var(--white); margin-bottom:14px; line-height:1.2; }
+.feat-p { font-size:14px; color:var(--muted); line-height:1.8; }
+.feat-img-wrap { overflow:hidden; position:relative; min-height:400px; }
+@media(max-width:720px) { .feat-img-wrap { min-height:220px; } }
+.feat-img-wrap img { width:100%; height:100%; object-fit:cover; object-position:top left; display:block; transition:transform .6s ease; }
+.feat-block:hover .feat-img-wrap img { transform:scale(1.03); }
+
+/* ── SCREENSHOTS GRID ────────────────────────── */
+#screenshots { background:var(--bg); border-top:1px solid var(--border); }
+.screen-section-title { font-size:9px; letter-spacing:5px; text-transform:uppercase; color:var(--muted); margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.screens-asym { display:grid; grid-template-columns:3fr 2fr; gap:2px; margin-bottom:2px; }
+.screens-trio { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+@media(max-width:720px) { .screens-asym { grid-template-columns:1fr; } .screens-trio { grid-template-columns:1fr; } }
+.screens-stack { display:flex; flex-direction:column; gap:2px; }
+.scr { position:relative; overflow:hidden; }
+.scr img { width:100%; display:block; aspect-ratio:16/10; object-fit:cover; object-position:top left; transition:transform .5s ease, filter .3s; filter:brightness(.9); }
+.scr:hover img { transform:scale(1.03); filter:brightness(1); }
+.scr figcaption { position:absolute; bottom:0; left:0; right:0; padding:10px 14px; background:linear-gradient(to top, rgba(6,16,10,.85), transparent); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); opacity:0; transition:opacity .3s; }
+.scr:hover figcaption { opacity:1; }
+
+/* ── GENETICS ────────────────────────────────── */
+#genetics { background:var(--surf); border-top:1px solid var(--border); }
+.genetics-wrap { display:grid; grid-template-columns:1fr 1fr; gap:80px; margin-top:60px; align-items:start; }
+@media(max-width:720px) { .genetics-wrap { grid-template-columns:1fr; gap:40px; } }
+.genetics-text p { font-size:14px; color:var(--muted); line-height:1.85; margin-bottom:18px; }
+.genetics-list { list-style:none; margin-top:12px; }
+.genetics-list li { display:flex; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); font-size:13px; color:var(--muted); line-height:1.5; }
+.genetics-list li:last-child { border-bottom:none; }
+.genetics-list li::before { content:'→'; color:var(--green); flex-shrink:0; }
+.gtable { border:1px solid var(--border); background:var(--bg); }
+.gtable-head { padding:14px 20px; border-bottom:1px solid var(--border); font-size:9px; letter-spacing:4px; text-transform:uppercase; color:var(--dim); }
+.grow { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid var(--borderl); transition:background .15s; }
+.grow:hover { background:rgba(0,187,85,.05); }
+.grow:last-child { border-bottom:none; }
+.grow-strain { font-size:13px; font-weight:bold; color:var(--white); }
+.grow-meta { font-size:11px; color:var(--dim); margin-top:2px; }
+.gbadge { font-size:9px; padding:3px 9px; letter-spacing:1px; border:1px solid; }
+.gbadge.s { color:#d48020; border-color:rgba(212,128,32,.35); }
+.gbadge.i { color:#9060d0; border-color:rgba(144,96,208,.35); }
+.gbadge.h { color:var(--green); border-color:rgba(0,187,85,.3); }
+.grow-thc { font-size:13px; font-weight:bold; color:var(--green); min-width:36px; text-align:right; }
+
+/* ── PRICING ─────────────────────────────────── */
+#pricing { background:var(--bg); border-top:1px solid var(--border); }
+#pricing .s-label { color:var(--green); }
+#pricing .s-label::before { background:var(--green); }
+#pricing .s-title { color:var(--white); }
+.plans { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--border); margin-top:60px; }
+@media(max-width:900px) { .plans { grid-template-columns:1fr 1fr; } }
+@media(max-width:500px) { .plans { grid-template-columns:1fr; } }
+.plan { padding:36px 28px; border-right:1px solid var(--border); position:relative; transition:background .2s; }
+.plan:last-child { border-right:none; }
+.plan:hover { background:var(--surf); }
+.plan.hot { background:rgba(0,187,85,.08); border-right-color:rgba(0,187,85,.2); }
+.plan-hot-tag { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--green); margin-bottom:20px; }
+.plan-name { font-size:9px; letter-spacing:4px; text-transform:uppercase; color:var(--dim); margin-bottom:18px; }
+.plan-price { font-family:"Alamanca",serif; font-size:2.8rem; color:var(--white); line-height:1; }
+.plan-cadence { font-size:11px; color:var(--dim); letter-spacing:1px; margin-top:6px; margin-bottom:28px; }
+.plan-sep { width:28px; height:1px; background:var(--border); margin-bottom:24px; }
+.plan-feats { list-style:none; margin-bottom:36px; }
+.plan-feats li { font-size:12px; color:var(--muted); padding:8px 0; border-bottom:1px solid var(--borderl); display:flex; gap:10px; }
+.plan-feats li:last-child { border-bottom:none; }
+.plan-feats li::before { content:'–'; color:var(--green); flex-shrink:0; }
+.plan.hot .plan-feats li { color:rgba(237,242,238,.75); }
+.plan-cta {
+    display:block; width:100%; text-align:center;
+    font-size:10px; letter-spacing:3px; text-transform:uppercase;
+    padding:13px; border:1px solid var(--dim);
+    color:var(--muted); background:transparent; cursor:pointer;
+    font-family:inherit; transition:all .25s;
+}
+.plan-cta:hover { border-color:var(--white); color:var(--white); }
+.plan.hot .plan-cta { border-color:var(--green); color:var(--green); }
+.plan.hot .plan-cta:hover { background:var(--green); color:var(--bg); }
+
+/* ── CONTACT ─────────────────────────────────── */
+#contact { background:var(--surf); border-top:1px solid var(--border); }
+.contact-grid { display:grid; grid-template-columns:1fr 1.4fr; gap:80px; margin-top:60px; }
+@media(max-width:720px) { .contact-grid { grid-template-columns:1fr; gap:40px; } }
+.contact-lhs p { font-size:14px; color:var(--muted); line-height:1.85; margin-bottom:32px; }
+.c-detail { margin-bottom:22px; }
+.c-detail-label { font-size:9px; letter-spacing:4px; text-transform:uppercase; color:var(--dim); margin-bottom:5px; }
+.c-detail-val { font-size:13px; color:var(--muted); }
+.cta-wa {
+    display:inline-flex; align-items:center; gap:12px;
+    border:1px solid rgba(37,211,102,.35); color:rgba(37,211,102,.85);
+    padding:13px 28px; font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    text-decoration:none; transition:all .25s; margin-top:12px;
+}
+.cta-wa:hover { background:rgba(37,211,102,.1); border-color:rgba(37,211,102,.7); color:#25d366; }
+.cform { background:var(--bg); border:1px solid var(--border); padding:40px; }
+.ff { margin-bottom:20px; }
+.ff label { display:block; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--dim); margin-bottom:9px; }
+.ff input, .ff select, .ff textarea {
+    width:100%; background:var(--surf2); border:1px solid var(--border); border-bottom-color:rgba(237,242,238,.15);
+    color:var(--white); padding:12px 14px; font-size:14px; outline:none;
+    transition:border-color .2s; font-family:inherit; border-radius:0; -webkit-appearance:none;
+}
+.ff input:focus, .ff select:focus, .ff textarea:focus { border-color:var(--green); }
+.ff textarea { resize:vertical; min-height:90px; }
+.ff select option { background:var(--surf); }
+.frow { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:500px) { .frow { grid-template-columns:1fr; } }
+.fnotice { margin-top:14px; padding:12px 16px; font-size:12px; line-height:1.5; display:none; border-left:3px solid; }
+.fnotice.ok  { border-color:var(--green); background:rgba(0,187,85,.06); color:var(--green); }
+.fnotice.err { border-color:#cc3030; background:rgba(204,48,48,.06); color:#ff6060; }
+.submit-btn {
+    width:100%; background:var(--green); color:var(--bg);
+    border:none; padding:16px; font-size:12px; font-weight:bold;
+    letter-spacing:4px; text-transform:uppercase; cursor:pointer;
+    font-family:inherit; transition:all .2s; margin-top:6px;
+    box-shadow:0 0 30px rgba(0,187,85,.2);
+}
+.submit-btn:hover { background:var(--gbright); box-shadow:0 0 50px rgba(0,238,106,.35); }
+
+/* ── SECTION HEADER HELPERS ───────────────────── */
+.s-wrap { max-width:1100px; margin:0 auto; }
+.s-label {
+    font-size:10px; letter-spacing:5px; text-transform:uppercase;
+    color:var(--muted); margin-bottom:18px;
+    display:flex; align-items:center; gap:14px;
+}
+.s-label::before { content:''; display:block; width:28px; height:1px; background:currentColor; opacity:.5; }
+.s-title { font-family:"Alamanca",serif; font-size:clamp(2rem,4vw,3.2rem); color:var(--white); line-height:1.1; margin-bottom:0; }
+section { padding:90px 52px; }
+@media(max-width:600px) { section { padding:64px 20px; } }
+
+/* ── FOOTER ──────────────────────────────────── */
+footer { background:var(--bg); border-top:1px solid var(--border); padding:26px 52px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.f-brand { font-family:"Alamanca",serif; font-size:1rem; color:var(--dim); letter-spacing:2px; }
+.f-note { font-size:11px; color:var(--dim); letter-spacing:1px; }
+
+/* ── SCROLL ANIMATIONS ────────────────────────── */
+.fi { opacity:0; transform:translateY(22px); transition:opacity .65s ease, transform .65s ease; }
+.fi.in { opacity:1; transform:translateY(0); }
+.fi-left { opacity:0; transform:translateX(-28px); transition:opacity .65s ease, transform .65s ease; }
+.fi-left.in { opacity:1; transform:translateX(0); }
+.fi-right { opacity:0; transform:translateX(28px); transition:opacity .65s ease, transform .65s ease; }
+.fi-right.in { opacity:1; transform:translateX(0); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-brand">Doope Menu</div>
+    <ul class="nav-links">
+        <li><a href="#features">Funzionalità</a></li>
+        <li><a href="#pricing">Piani</a></li>
+        <li><a href="#contact">Contatto</a></li>
+    </ul>
+    <a href="#contact" class="nav-btn">Inizia ora</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero" style="padding-top:60px;">
+    <div class="hero-glow"></div>
+    <div class="hero-pre">Software per associazioni private</div>
+    <h1 class="hero-title">
+        Doope
+        <span class="hero-title-accent">Menu</span>
+    </h1>
+    <div class="hero-divider"></div>
+    <p class="hero-sub">Il catalogo digitale che i tuoi soci non dimenticheranno. Gestione prodotti, archivio genetiche, temi personalizzati — tutto dal tuo pannello.</p>
+    <div class="hero-ctas">
+        <a href="#pricing" class="cta-main">Scopri i piani</a>
+        <a href="#screenshots" class="cta-ghost">Vedi il prodotto</a>
+    </div>
+    <div class="hero-scroll">↓ scorri</div>
+</section>
+
+<!-- STATS BAR -->
+<div id="stats">
+    <div class="stat-item fi">
+        <div class="stat-num">5</div>
+        <div class="stat-lbl">Lingue</div>
+    </div>
+    <div class="stat-item fi">
+        <div class="stat-num">9</div>
+        <div class="stat-lbl">Temi grafici</div>
+    </div>
+    <div class="stat-item fi">
+        <div class="stat-num">∞</div>
+        <div class="stat-lbl">Prodotti</div>
+    </div>
+    <div class="stat-item fi">
+        <div class="stat-num">17+</div>
+        <div class="stat-lbl">Categorie</div>
+    </div>
+</div>
+
+<!-- IN USO -->
+<section id="inuso" style="padding:0;">
+    <div class="inuso-panel inuso-panel-a fi-left">
+        <img src="socia%20che%20usa%20il%20tablet.jpeg" alt="Socia con tablet">
+        <div class="inuso-over">
+            <div class="inuso-tag">In uso — ogni giorno</div>
+            <h2 class="inuso-h">Il catalogo in mano<br>ai tuoi soci.</h2>
+            <p class="inuso-p">Niente app da installare. Si apre dal browser di qualsiasi dispositivo — tablet al bancone, telefono in mano.</p>
+        </div>
+    </div>
+    <div class="inuso-panel inuso-panel-b fi-right">
+        <img src="socia%20tablet%202.jpeg" alt="Socia con tablet">
+        <div class="inuso-over">
+            <div class="inuso-tag">Qualsiasi dispositivo</div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES — alternating blocks -->
+<section id="features" style="padding:0;">
+
+    <div class="feat-block">
+        <div class="feat-text fi-left">
+            <div class="feat-num">01</div>
+            <h3 class="feat-h">Catalogo prodotti completo</h3>
+            <p class="feat-p">WEED, HASH, ICE-O-LATOR, DRY-SIFT, ROSIN, VAPE, PRE-ROLL e ogni categoria personalizzata. Foto ad alta risoluzione, THC, CBD, dominanza e descrizione per ogni prodotto. Aggiungi, nascondi, riordina in tempo reale.</p>
+        </div>
+        <div class="feat-img-wrap fi-right">
+            <img src="CATALOGUE%20WEED.PNG" alt="Catalogo prodotti">
+        </div>
+    </div>
+
+    <div class="feat-block flip">
+        <div class="feat-text fi-right">
+            <div class="feat-num">02</div>
+            <h3 class="feat-h">Pannello admin completo</h3>
+            <p class="feat-p">Interfaccia di gestione professionale protetta da password. Aggiungi prodotti con foto, gestisci categorie, riordina con drag & drop. Tutto si salva in tempo reale sul server.</p>
+        </div>
+        <div class="feat-img-wrap fi-left">
+            <img src="products%20admin.PNG" alt="Pannello admin">
+        </div>
+    </div>
+
+    <div class="feat-block">
+        <div class="feat-text fi-left">
+            <div class="feat-num">03</div>
+            <h3 class="feat-h">Temi e font personalizzabili</h3>
+            <p class="feat-p">9 palette di colori, 7 effetti di sfondo animati, font caricabile dal cliente. Ogni associazione ha un'identità visiva unica che rispecchia il proprio stile.</p>
+        </div>
+        <div class="feat-img-wrap fi-right">
+            <img src="theme%20admin.PNG" alt="Personalizzazione tema">
+        </div>
+    </div>
+
+</section>
+
+<!-- SCREENSHOTS GRID -->
+<section id="screenshots">
+    <div class="s-wrap">
+        <div class="s-label fi">Preview</div>
+        <h2 class="s-title fi">Vedi com'è fatto.</h2>
+
+        <div style="margin-top:52px;">
+            <div class="screen-section-title fi">Pannello amministratore</div>
+            <div class="screens-asym fi">
+                <figure class="scr">
+                    <img src="products%20admin.PNG" alt="Gestione prodotti">
+                    <figcaption>Gestione prodotti</figcaption>
+                </figure>
+                <div class="screens-stack">
+                    <figure class="scr">
+                        <img src="categories%20admin.PNG" alt="Categorie">
+                        <figcaption>Categorie</figcaption>
+                    </figure>
+                    <figure class="scr">
+                        <img src="theme%20admin.PNG" alt="Tema">
+                        <figcaption>Tema</figcaption>
+                    </figure>
+                </div>
+            </div>
+
+            <div class="screen-section-title fi" style="margin-top:40px;">Catalogo — vista soci</div>
+            <div class="screens-trio fi">
+                <figure class="scr">
+                    <img src="CATALOGUE%20WEED.PNG" alt="WEED">
+                    <figcaption>WEED</figcaption>
+                </figure>
+                <figure class="scr">
+                    <img src="ice-o-lator%20catalogue.PNG" alt="ICE-O-LATOR">
+                    <figcaption>ICE-O-LATOR</figcaption>
+                </figure>
+                <figure class="scr">
+                    <img src="dry-sift-catalogue.PNG" alt="DRY-SIFT">
+                    <figcaption>DRY-SIFT</figcaption>
+                </figure>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- GENETICS -->
+<section id="genetics">
+    <div class="s-wrap">
+        <div class="s-label fi">Archivio Genetiche</div>
+        <h2 class="s-title fi">Non solo un menu.<br>La memoria del tuo club.</h2>
+
+        <div class="genetics-wrap">
+            <div class="genetics-text fi-left">
+                <p>Doope Menu non è solo un catalogo di quello che hai adesso. È un archivio permanente di tutto ciò che è mai transitato nel tuo dispensario — ogni cultivar, ogni produttore, ogni batch.</p>
+                <p>Tieni traccia della storia della tua associazione. Cerca una genetica vista due anni fa. Costruisci un patrimonio di conoscenza unico.</p>
+                <ul class="genetics-list">
+                    <li>Ogni prodotto rimane nell'archivio anche quando esaurito</li>
+                    <li>Nascondi dal catalogo pubblico senza cancellare dal database</li>
+                    <li>Note e descrizioni dettagliate per ogni genetica</li>
+                    <li>Badge colorati per produttori abituali</li>
+                </ul>
+            </div>
+            <div class="gtable fi-right">
+                <div class="gtable-head">Archivio genetiche — esempio</div>
+                <div class="grow">
+                    <div><div class="grow-strain">Amnesia Haze</div><div class="grow-meta">WEED · GO HEMP · 2024</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;"><span class="gbadge s">Sativa</span><span class="grow-thc">19%</span></div>
+                </div>
+                <div class="grow">
+                    <div><div class="grow-strain">Black Diamond</div><div class="grow-meta">DRY-SIFT · NARNIA · 2024</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;"><span class="gbadge i">Indica</span><span class="grow-thc">45%</span></div>
+                </div>
+                <div class="grow">
+                    <div><div class="grow-strain">Crystal Clear</div><div class="grow-meta">ICE-O-LATOR · 2023</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;"><span class="gbadge h">Hybrid</span><span class="grow-thc">22%</span></div>
+                </div>
+                <div class="grow">
+                    <div><div class="grow-strain">Gelato #41</div><div class="grow-meta">WEED · 2023</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;"><span class="gbadge h">Hybrid</span><span class="grow-thc">24%</span></div>
+                </div>
+                <div class="grow">
+                    <div><div class="grow-strain">OG Kush Live Rosin</div><div class="grow-meta">LIVE-ROSIN · 2023</div></div>
+                    <div style="display:flex;gap:8px;align-items:center;"><span class="gbadge i">Indica</span><span class="grow-thc">68%</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+    <div class="s-wrap">
+        <div class="s-label fi">Piani</div>
+        <h2 class="s-title fi">Semplice e trasparente.</h2>
+
+        <div class="plans fi">
+            <div class="plan">
+                <div class="plan-name">Trial</div>
+                <div class="plan-price">€ —</div>
+                <div class="plan-cadence">prova gratuita</div>
+                <div class="plan-sep"></div>
+                <ul class="plan-feats">
+                    <li>Catalogo completo</li>
+                    <li>Pannello admin</li>
+                    <li>Durata limitata</li>
+                    <li>Supporto chat</li>
+                </ul>
+                <button class="plan-cta" onclick="selectPlan('Trial')">Richiedi prova</button>
+            </div>
+            <div class="plan hot">
+                <div class="plan-hot-tag">Più scelto</div>
+                <div class="plan-name">Mensile</div>
+                <div class="plan-price">€ —</div>
+                <div class="plan-cadence">al mese</div>
+                <div class="plan-sep"></div>
+                <ul class="plan-feats">
+                    <li>Catalogo + archivio</li>
+                    <li>Pannello admin</li>
+                    <li>Multi-lingua</li>
+                    <li>Temi personalizzabili</li>
+                    <li>Supporto prioritario</li>
+                </ul>
+                <button class="plan-cta" onclick="selectPlan('Mensile')">Inizia ora</button>
+            </div>
+            <div class="plan">
+                <div class="plan-name">Annuale</div>
+                <div class="plan-price">€ —</div>
+                <div class="plan-cadence">all'anno</div>
+                <div class="plan-sep"></div>
+                <ul class="plan-feats">
+                    <li>Catalogo + archivio</li>
+                    <li>Pannello admin</li>
+                    <li>Multi-lingua</li>
+                    <li>Temi personalizzabili</li>
+                    <li>Aggiornamenti inclusi</li>
+                    <li>Supporto prioritario</li>
+                </ul>
+                <button class="plan-cta" onclick="selectPlan('Annuale')">Scegli annuale</button>
+            </div>
+            <div class="plan">
+                <div class="plan-name">Lifetime</div>
+                <div class="plan-price">€ —</div>
+                <div class="plan-cadence">una tantum</div>
+                <div class="plan-sep"></div>
+                <ul class="plan-feats">
+                    <li>Catalogo + archivio</li>
+                    <li>Pannello admin</li>
+                    <li>Multi-lingua</li>
+                    <li>Temi personalizzabili</li>
+                    <li>Aggiornamenti a vita</li>
+                    <li>Supporto dedicato</li>
+                </ul>
+                <button class="plan-cta" onclick="selectPlan('Lifetime')">Acquista lifetime</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+    <div class="s-wrap">
+        <div class="s-label fi">Contatto</div>
+        <h2 class="s-title fi">Inizia oggi.</h2>
+
+        <div class="contact-grid">
+            <div class="contact-lhs fi-left">
+                <p>Compila il form con i dati del tuo club e il piano che ti interessa. Ti rispondiamo entro 24 ore per procedere con l'attivazione.</p>
+                <div class="c-detail">
+                    <div class="c-detail-label">Email</div>
+                    <!-- SOSTITUISCI CON LA TUA EMAIL -->
+                    <div class="c-detail-val">info@doopemenu.com</div>
+                </div>
+                <div class="c-detail">
+                    <div class="c-detail-label">Risposta media</div>
+                    <div class="c-detail-val">Entro 24 ore lavorative</div>
+                </div>
+                <div class="c-detail">
+                    <div class="c-detail-label">Privacy</div>
+                    <div class="c-detail-val">I tuoi dati restano sul nostro server sicuro</div>
+                </div>
+                <!-- SOSTITUISCI +39XXXXXXXXXX -->
+                <a href="https://wa.me/39XXXXXXXXXX?text=Ciao%2C+sono+interessato+a+Doope+Menu." target="_blank" class="cta-wa" id="waBtn">WhatsApp</a>
+            </div>
+
+            <div class="cform fi-right">
+                <div class="frow">
+                    <div class="ff"><label>Nome</label><input type="text" id="fName" placeholder="Mario Rossi"></div>
+                    <div class="ff"><label>Club</label><input type="text" id="fClub" placeholder="Club Verde"></div>
+                </div>
+                <div class="ff"><label>Email</label><input type="email" id="fEmail" placeholder="email@esempio.com"></div>
+                <div class="ff"><label>Telefono / WhatsApp</label><input type="text" id="fPhone" placeholder="+39 333 000 0000"></div>
+                <div class="ff">
+                    <label>Piano</label>
+                    <select id="fPlan">
+                        <option value="Trial">Trial — prova gratuita</option>
+                        <option value="Mensile" selected>Mensile</option>
+                        <option value="Annuale">Annuale</option>
+                        <option value="Lifetime">Lifetime</option>
+                    </select>
+                </div>
+                <div class="ff"><label>Messaggio</label><textarea id="fMsg" placeholder="Domande o esigenze particolari..."></textarea></div>
+                <button class="submit-btn" onclick="sendForm()">Invia richiesta</button>
+                <div class="fnotice" id="fNotice"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="f-brand">Doope Menu</div>
+    <div class="f-note">© 2026 Doope Menu — Tutti i diritti riservati</div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(es => {
+    es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.fi,.fi-left,.fi-right').forEach(el => obs.observe(el));
+
+function selectPlan(p) {
+    document.getElementById('fPlan').value = p;
+    document.getElementById('contact').scrollIntoView({ behavior:'smooth' });
+}
+
+document.getElementById('fPlan').addEventListener('change', function() {
+    const txt = encodeURIComponent(`Ciao, sono interessato al piano ${this.value} di Doope Menu.`);
+    document.getElementById('waBtn').href = `https://wa.me/39XXXXXXXXXX?text=${txt}`;
+});
+
+function sendForm() {
+    const n = document.getElementById('fName').value.trim();
+    const c = document.getElementById('fClub').value.trim();
+    const e = document.getElementById('fEmail').value.trim();
+    const p = document.getElementById('fPhone').value.trim();
+    const pl= document.getElementById('fPlan').value;
+    const m = document.getElementById('fMsg').value.trim();
+    if (!n||!c||!e) { note('Compila nome, club ed email.', false); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { note('Email non valida.', false); return; }
+    const subj = encodeURIComponent(`[Doope Menu] ${c} — Piano ${pl}`);
+    const body = encodeURIComponent(`Nome: ${n}\nClub: ${c}\nEmail: ${e}\n${p?'Tel: '+p+'\n':''}Piano: ${pl}${m?'\n\n'+m:''}`);
+    window.location.href = `mailto:info@doopemenu.com?subject=${subj}&body=${body}`;
+    note('Client email aperto. Se non si apre: info@doopemenu.com', true);
+}
+
+function note(msg, ok) {
+    const el = document.getElementById('fNotice');
+    el.textContent = msg; el.className = 'fnotice '+(ok?'ok':'err'); el.style.display='block';
+}
+</script>
+</body>
+</html>
